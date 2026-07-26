@@ -45,7 +45,10 @@ _ex4_count = spark.sql(f"""
 """).collect()[0].cnt
 JOINS_EX4_EXPECTED_COUNT = _ex4_count
 
-# Exercise 5: self-join same-day orders by same customer
+# Exercise 5: self-join same-day orders by same customer.
+# Needs customers with 2+ DISTINCT order_ids on one order_date - the duplicate-order_id
+# rows (ORD-042, ORD-067) do NOT qualify, since o1.order_id < o2.order_id is never true
+# for two rows sharing one id. See ORD-101..ORD-104 in 00_Setup.py.
 _ex5_count = spark.sql(f"""
     SELECT COUNT(*) AS cnt
     FROM {CATALOG}.{BASE_SCHEMA}.orders o1
@@ -81,6 +84,24 @@ _ex7_count = spark.sql(f"""
     )
 """).collect()[0].cnt
 JOINS_EX7_EXPECTED_COUNT = _ex7_count
+
+# COMMAND ----------
+
+# Guard: every expected count must be non-zero. Without this, a base-data regression turns
+# an exercise assertion into a tautology - an empty result would "pass" against an empty
+# expectation and the exercise would silently teach nothing.
+for _name, _cnt in [
+    ("Ex1 (inner join)", JOINS_EX1_EXPECTED_COUNT),
+    ("Ex3 (anti-join orphans)", JOINS_EX3_EXPECTED_COUNT),
+    ("Ex4 (semi-join)", JOINS_EX4_EXPECTED_COUNT),
+    ("Ex5 (self-join same-day pairs)", JOINS_EX5_EXPECTED_COUNT),
+    ("Ex6 (multi-table join)", JOINS_EX6_EXPECTED_COUNT),
+    ("Ex7 (GROUP BY HAVING)", JOINS_EX7_EXPECTED_COUNT),
+]:
+    assert _cnt > 0, (
+        f"{_name} expects 0 rows from the base data - the exercise cannot be solved. "
+        f"Re-run 00_Setup.py to rebuild {CATALOG}.{BASE_SCHEMA} base tables."
+    )
 
 # COMMAND ----------
 

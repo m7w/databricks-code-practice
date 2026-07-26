@@ -12,7 +12,7 @@
 # MAGIC **Solutions**: If stuck, see `solutions/spark-sql-joins-solutions.py` for hints and answers.
 # MAGIC
 # MAGIC **Tables used** (from `00_Setup.py`):
-# MAGIC - `db_code.elt.orders` - order records (~100 rows)
+# MAGIC - `db_code.elt.orders` - order records (~105 rows)
 # MAGIC - `db_code.elt.customers` - customer dimension (~50 rows)
 # MAGIC - `db_code.elt.products` - product catalog (~30 rows)
 # MAGIC - `db_code.elt.order_items` - line items per order (~200 rows)
@@ -86,7 +86,7 @@
 # MAGIC Join orders with customers to get enriched order records. Only include orders that
 # MAGIC have a matching customer. Write the result as a Delta table.
 # MAGIC
-# MAGIC **Source**: `db_code.elt.orders` (~100 rows, some with NULL customer_id) and `db_code.elt.customers` (~50 rows)
+# MAGIC **Source**: `db_code.elt.orders` (~105 rows, some with NULL customer_id) and `db_code.elt.customers` (~50 rows)
 # MAGIC
 # MAGIC **Target**: Write to `db_code.spark_sql_joins.joins_ex1_output`
 # MAGIC
@@ -134,7 +134,7 @@ print("Exercise 1 passed!")
 # MAGIC matching customer. Replace NULL customer names with 'Unknown'.
 # MAGIC Write the result as a Delta table.
 # MAGIC
-# MAGIC **Source**: `db_code.elt.orders` (~100 rows) and `db_code.elt.customers` (~50 rows)
+# MAGIC **Source**: `db_code.elt.orders` (~105 rows) and `db_code.elt.customers` (~50 rows)
 # MAGIC
 # MAGIC **Target**: Write to `db_code.spark_sql_joins.joins_ex2_output`. Should have the same row count as orders.
 # MAGIC
@@ -182,7 +182,7 @@ print("Exercise 2 passed!")
 # MAGIC `orders` table (orphan records). This is a common data quality check in production
 # MAGIC pipelines. Write the orphans as a Delta table for downstream investigation.
 # MAGIC
-# MAGIC **Source**: `db_code.elt.order_items` (~200 rows, has orphan order_ids) and `db_code.elt.orders` (~100 rows)
+# MAGIC **Source**: `db_code.elt.order_items` (~200 rows, has orphan order_ids) and `db_code.elt.orders` (~105 rows)
 # MAGIC
 # MAGIC **Target**: Write to `db_code.spark_sql_joins.joins_ex3_output`. Contains only orphan line items.
 # MAGIC
@@ -234,7 +234,7 @@ print("Exercise 3 passed!")
 # MAGIC a semi-join returns only columns from the left table and never duplicates rows,
 # MAGIC even when a customer has multiple orders.
 # MAGIC
-# MAGIC **Source**: `db_code.elt.customers` (~50 rows) and `db_code.elt.orders` (~100 rows)
+# MAGIC **Source**: `db_code.elt.customers` (~50 rows) and `db_code.elt.orders` (~105 rows)
 # MAGIC
 # MAGIC **Target**: Write to `db_code.spark_sql_joins.joins_ex4_output`. One row per customer who has orders.
 # MAGIC
@@ -286,7 +286,10 @@ print("Exercise 4 passed!")
 # MAGIC Self-join the orders table to find pairs of orders where the same customer
 # MAGIC placed multiple orders on the same day. Each pair should appear once (not twice).
 # MAGIC
-# MAGIC **Source**: `db_code.elt.orders` (~100 rows)
+# MAGIC **Source**: `db_code.elt.orders` (~105 rows). Same-day repeat orders live in
+# MAGIC CUST-003 (2025-07-04), CUST-047 (2025-09-08) and CUST-050 (2025-09-12, three orders).
+# MAGIC Note that the duplicate rows for ORD-042 and ORD-067 do NOT form pairs - both rows
+# MAGIC share a single `order_id`, so `o1.order_id < o2.order_id` is never true for them.
 # MAGIC
 # MAGIC **Target**: Write to `db_code.spark_sql_joins.joins_ex5_output`. One row per order pair.
 # MAGIC
@@ -314,6 +317,9 @@ print("Exercise 4 passed!")
 # Validate Exercise 5
 result = spark.table(f"{CATALOG}.{SCHEMA}.joins_ex5_output")
 
+# Non-empty: same-day pairs exist in the base data (CUST-003, CUST-047, CUST-050)
+assert result.count() > 0, \
+    "Output is empty - the base data has same-day repeat orders, so a correct self-join returns rows"
 # Row count
 assert result.count() == JOINS_EX5_EXPECTED_COUNT, \
     f"Expected {JOINS_EX5_EXPECTED_COUNT} pairs, got {result.count()}"
@@ -399,7 +405,7 @@ print("Exercise 6 passed!")
 # MAGIC Aggregate orders per customer and filter to only high-value customers using HAVING.
 # MAGIC This is a core reporting pattern: aggregate first, filter the groups second.
 # MAGIC
-# MAGIC **Source**: `db_code.elt.orders` (~100 rows) and `db_code.elt.customers` (~50 rows)
+# MAGIC **Source**: `db_code.elt.orders` (~105 rows) and `db_code.elt.customers` (~50 rows)
 # MAGIC
 # MAGIC **Target**: Write to `db_code.spark_sql_joins.joins_ex7_output`. One row per qualifying customer.
 # MAGIC

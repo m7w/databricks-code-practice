@@ -9,7 +9,7 @@
 # MAGIC - Catalog: `db_code`
 # MAGIC - Zone schemas: `delta_lake`, `elt`, `streaming`, `production`, `governance`, `performance`, `fundamentals`
 # MAGIC - Per-topic schemas: `spark_sql_joins`, `window_functions`, `pyspark_transformations`, `auto_loader`, `batch_ingestion`, `medallion_architecture`, `complex_data_types`
-# MAGIC - Base tables (in `elt`): `orders` (~100 rows), `customers` (~50 rows), `products` (~30 rows),
+# MAGIC - Base tables (in `elt`): `orders` (~105 rows), `customers` (~50 rows), `products` (~30 rows),
 # MAGIC   `events` (~150 rows), `order_items` (~200 rows)
 # MAGIC - Volumes: `auto_loader.source_files`, `auto_loader.checkpoints`, `batch_ingestion.source_files`
 # MAGIC
@@ -57,6 +57,10 @@ for schema in [
 # -- Idempotency Check --
 # If base tables already exist with correct row counts, skip recreation.
 # This avoids redundant writes on repeated runs and respects schema quotas.
+#
+# Row counts alone are not enough: a table created before the same-day repeat orders
+# (ORD-101..ORD-104) were added still passes the count check but breaks the self-join
+# exercise. So we also check for the data shape those rows provide and rebuild if missing.
 
 _SETUP_SKIP = False
 try:
@@ -65,7 +69,19 @@ try:
     _products_ct = spark.table(f"{CATALOG}.elt.products").count()
     _events_ct = spark.table(f"{CATALOG}.elt.events").count()
     _items_ct = spark.table(f"{CATALOG}.elt.order_items").count()
-    if _orders_ct >= 100 and _customers_ct >= 50 and _products_ct >= 30 and _events_ct >= 150 and _items_ct >= 200:
+    # Customers with 2+ DISTINCT order_ids on the same order_date (self-join pairs)
+    _same_day_ct = spark.sql(f"""
+        SELECT COUNT(*) AS cnt FROM (
+            SELECT customer_id, order_date
+            FROM {CATALOG}.elt.orders
+            WHERE customer_id IS NOT NULL
+            GROUP BY customer_id, order_date
+            HAVING COUNT(DISTINCT order_id) > 1
+        )
+    """).collect()[0].cnt
+    if _same_day_ct == 0:
+        print("Base orders table predates the same-day repeat orders - recreating base tables.")
+    if _same_day_ct > 0 and _orders_ct >= 100 and _customers_ct >= 50 and _products_ct >= 30 and _events_ct >= 150 and _items_ct >= 200:
         _SETUP_SKIP = True
         print("=" * 60)
         print(f"  Base tables already exist with correct row counts. Skipping creation.")
@@ -77,10 +93,12 @@ except Exception:
 # COMMAND ----------
 
 # -- Orders Table --
-# ~100 rows. Primary table referenced by most exercises.
+# ~105 rows. Primary table referenced by most exercises.
 #
 # Edge cases built in:
 #   - Duplicates: ORD-042 and ORD-067 appear twice with different updated_at
+#   - Same-day repeat orders (distinct order_ids): CUST-003 on 2025-07-04, CUST-047 on 2025-09-08,
+#     CUST-050 on 2025-09-12 (3 orders). Required by the self-join exercise.
 #   - Null customer_id: ORD-015, ORD-038, ORD-071
 #   - $0 amounts: ORD-022, ORD-058
 #   - Future dates: ORD-091 through ORD-095 have order_date in 2027
@@ -231,7 +249,17 @@ if not _SETUP_SKIP:
     ('ORD-097', 'CUST-043', 'PROD-007', 67.50,  'shipped',   DATE '2026-01-10', TIMESTAMP '2026-01-10 14:00:00'),
     ('ORD-098', 'CUST-044', 'PROD-009', 525.00, 'completed', DATE '2026-01-15', TIMESTAMP '2026-01-15 10:00:00'),
     ('ORD-099', 'CUST-045', 'PROD-006', 35.00,  'pending',   DATE '2026-01-20', TIMESTAMP '2026-01-20 15:30:00'),
-    ('ORD-100', 'CUST-046', 'PROD-008', 199.00, 'completed', DATE '2026-01-25', TIMESTAMP '2026-01-25 08:45:00')
+    ('ORD-100', 'CUST-046', 'PROD-008', 199.00, 'completed', DATE '2026-01-25', TIMESTAMP '2026-01-25 08:45:00'),
+
+    -- ORD-101 through ORD-104: same-day repeat orders (distinct order_ids, same customer + order_date).
+    -- These are what makes the self-join exercise return rows. Do NOT confuse them with the
+    -- duplicate-order_id edge case (ORD-042, ORD-067), where both rows share ONE order_id and so
+    -- never satisfy o1.order_id < o2.order_id.
+    -- Pairs produced: CUST-003 x1, CUST-047 x1, CUST-050 x3 (3 same-day orders = 3 pairs) = 5 total.
+    ('ORD-101', 'CUST-003', 'PROD-006', 35.00,  'completed', DATE '2025-07-04', TIMESTAMP '2025-07-04 18:10:00'),
+    ('ORD-102', 'CUST-047', 'PROD-007', 67.50,  'shipped',   DATE '2025-09-08', TIMESTAMP '2025-09-08 14:20:00'),
+    ('ORD-103', 'CUST-050', 'PROD-002', 130.00, 'completed', DATE '2025-09-12', TIMESTAMP '2025-09-12 16:05:00'),
+    ('ORD-104', 'CUST-050', 'PROD-006', 35.00,  'shipped',   DATE '2025-09-12', TIMESTAMP '2025-09-12 18:40:00')
 
     AS t(order_id, customer_id, product_id, amount, status, order_date, updated_at)
     """)

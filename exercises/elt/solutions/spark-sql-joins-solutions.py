@@ -136,9 +136,13 @@ spark.sql(f"""
 # MAGIC 1. Self-join means joining a table with itself - use two different aliases (o1, o2)
 # MAGIC 2. Join on customer_id AND order_date to find same-day orders by the same customer
 # MAGIC 3. Use o1.order_id < o2.order_id to avoid pairing an order with itself and to deduplicate pairs
+# MAGIC 4. Expect 5 pairs: CUST-003 (2025-07-04), CUST-047 (2025-09-08), and CUST-050
+# MAGIC    (2025-09-12, three same-day orders = three pairs)
 # MAGIC
 # MAGIC **Common mistakes**:
 # MAGIC - Using o1.order_id != o2.order_id instead of < (produces each pair twice: A-B and B-A)
+# MAGIC - Expecting the duplicate rows for ORD-042 / ORD-067 to pair up - they share ONE order_id,
+# MAGIC   so o1.order_id < o2.order_id is never true for them (that is a dedup case, not a pair case)
 # MAGIC - Forgetting to filter out NULL customer_ids (NULL = NULL is false in SQL, but be explicit)
 # MAGIC - Joining only on customer_id without order_date (finds all orders by same customer, not just same-day)
 
