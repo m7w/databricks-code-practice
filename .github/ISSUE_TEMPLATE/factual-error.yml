@@ -1,0 +1,35 @@
+name: Factual error or outdated content
+description: A notebook or README describes Databricks behavior that no longer matches the product
+title: "[docs] "
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Databricks ships fast. Deprecated options, changed defaults, renamed features - all fair game.
+  - type: input
+    id: location
+    attributes:
+      label: Where
+      description: File path, and line or exercise number if you have it.
+      placeholder: exercises/delta-lake/05_liquid-clustering.py - Exercise 3
+    validations:
+      required: true
+  - type: textarea
+    id: claim
+    attributes:
+      label: What it currently says
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: What's actually true now
+      description: Link the current Databricks docs if you have them. That's what makes this fast to fix.
+    validations:
+      required: true
+  - type: input
+    id: runtime
+    attributes:
+      label: Databricks Runtime you observed this on
+      placeholder: Free Edition serverless

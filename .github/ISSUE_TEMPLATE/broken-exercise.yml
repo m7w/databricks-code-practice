@@ -1,0 +1,55 @@
+name: Broken exercise
+description: An exercise can't be solved as written, or an assertion looks wrong
+title: "[broken] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for catching this. Broken assertions are the most valuable thing you can report - they silently waste everyone's time.
+
+        **Not sure if it's the exercise or your code?** Open the issue anyway.
+  - type: input
+    id: location
+    attributes:
+      label: Which exercise
+      description: Notebook path and exercise number.
+      placeholder: exercises/elt/01_spark-sql-joins.py - Exercise 5
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What the exercise asks for
+      description: Quote the requirement from the problem cell.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What actually happens
+      description: The assertion message, error, or wrong result. Paste as text, not a screenshot.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: attempt
+    attributes:
+      label: Your code (optional)
+      description: What you put in the TODO cell. Helps rule out a mistake on your side.
+      render: python
+  - type: input
+    id: runtime
+    attributes:
+      label: Databricks Runtime
+      description: Serverless, or the DBR version. Free Edition is fine to just say "Free Edition serverless".
+      placeholder: Free Edition serverless
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I ran the topic's `00_Setup.py` and the notebook's setup cell
+          required: true
+        - label: I checked the matching notebook in `solutions/` and it doesn't resolve the problem
+          required: true
