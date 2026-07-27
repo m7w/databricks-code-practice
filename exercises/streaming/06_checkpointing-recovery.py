@@ -492,8 +492,8 @@ print("Exercise 6 passed!")
 # MAGIC    Use a watermark of `0 seconds` so all input is in scope. Write to `ex7_target` with
 # MAGIC    `outputMode("complete")`, `trigger(availableNow=True)`, and checkpoint `{CHECKPOINT_BASE}/ex7/`.
 # MAGIC    Run once. The target has 6 windows with counts summing to 30.
-# MAGIC 2. Append 5 more rows to `ex7_source` that fall into the `10:25–10:30` window. After the
-# MAGIC    append, the source has 35 rows total. The window `10:25–10:30` originally held 5
+# MAGIC 2. Append 5 more rows to `ex7_source` that fall into the `10:25-10:30` window. After the
+# MAGIC    append, the source has 35 rows total. The window `10:25-10:30` originally held 5
 # MAGIC    events (`EV-026` ... `EV-030`); after the append it holds 10.
 # MAGIC 3. Run the SAME aggregation again with the SAME checkpoint.
 # MAGIC 4. Observe: the second run does NOT recompute counts for the first five windows from

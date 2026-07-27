@@ -1,4 +1,4 @@
-# 6 Delta Lake Optimization Techniques: A Hands‑On Learning Project
+# 6 Delta Lake Optimization Techniques: A Hands-On Learning Project
 
 > Independent educational resource; not endorsed by Databricks, Inc. "Databricks" and "Delta Lake" are trademarks of their respective owners.
 
@@ -10,6 +10,7 @@
 
 - 🔗 [LinkedIn](https://www.linkedin.com/in/jrlasak/) - Databricks projects and tips
 - 📬 [Substack Newsletter](https://dataengineer.wiki/substack?utm_source=github&utm_medium=readme&utm_campaign=databricks-code-practice) - Exclusive content for Data Engineers
+- 🎧 [Podcast](https://dataengineer.wiki/podcast?utm_source=github&utm_medium=readme&utm_campaign=databricks-code-practice) - Databricks and data engineering, on Spotify, Apple, and YouTube
 - 🌐 [DataEngineer.wiki](https://dataengineer.wiki/?utm_source=github&utm_medium=readme&utm_campaign=databricks-code-practice) - Training materials and resources
 - 🚀 [More Practice Labs](https://github.com/jrlasak/databricks-code-practice) - more pipeline labs, deep-dives, and exercises in this repo
 
@@ -24,9 +25,9 @@ Modern lakehouse performance hinges on _layout_ and _file hygiene_. This project
 - Liquid Clustering
 - VACUUM lifecycle hygiene
 
-You will generate a synthetic 50M‑row sales dataset, capture baseline query metrics, then layer techniques - measuring their impact (files scanned, data read, scan time) via the Spark UI and table metadata.
+You will generate a synthetic 50M-row sales dataset, capture baseline query metrics, then layer techniques - measuring their impact (files scanned, data read, scan time) via the Spark UI and table metadata.
 
-All instructions and code live in the notebook: **[`project.ipynb`](project.ipynb)**. Open it first; proceed cell by cell.
+All instructions and code live in the notebook: **[`project.py`](project.py)**. Open it first; proceed cell by cell.
 
 ## 2. Learning Objectives
 
@@ -78,7 +79,7 @@ A single helper registry centralizes fully qualified names for reproducibility.
    - The repo will appear as a folder in your workspace, allowing you to edit, run notebooks, and manage files directly from Databricks.
    - For more details, see the official Databricks documentation: [Repos in Databricks](https://docs.databricks.com/repos/index.html).
 
-3. Open `project.ipynb`
+3. Open `project.py`
 4. Execute cells sequentially - pick the serverless cluster. The notebook is idempotent - data generation skips if the base table already exists.
 5. After each optimization action, open the Spark UI (SQL / DataFrame tab) and record metrics.
 
@@ -122,4 +123,4 @@ Run the final cleanup cell (commented by default) to drop the entire catalog if 
 
 ---
 
-Open `project.ipynb` now and start with the configuration cell. Record metrics; experimentation beats theory. Enjoy!
+Open `project.py` now and start with the configuration cell. Record metrics; experimentation beats theory. Enjoy!

@@ -12,8 +12,9 @@ Clone once, import into Databricks, pick a folder. Exercises fail loud until you
 
 **Jakub Lasak** - Databricks Data Engineer. Helping you interview like seniors, execute like seniors, and think like seniors.
 
-- [LinkedIn](https://www.linkedin.com/in/jrlasak/) (13.5K followers) - Databricks projects and tips
-- [Substack](https://dataengineer.wiki/substack?utm_source=github&utm_medium=readme&utm_campaign=databricks-code-practice) - Newsletter for data engineers
+- [LinkedIn](https://www.linkedin.com/in/jrlasak/) (15.5K followers) - Databricks projects and tips
+- [Substack](https://dataengineer.wiki/substack?utm_source=github&utm_medium=readme&utm_campaign=databricks-code-practice) - Newsletter for data engineers, 4.8K subscribers
+- [Podcast](https://dataengineer.wiki/podcast?utm_source=github&utm_medium=readme&utm_campaign=databricks-code-practice) - Databricks and data engineering, on Spotify, Apple, and YouTube
 - [DataEngineer.wiki](https://dataengineer.wiki?utm_source=github&utm_medium=readme&utm_campaign=databricks-code-practice) - Cheat sheets, learning paths, cert guides
 
 > **Prepping for interviews?** Writing code is one half of the battle - knowing the questions that actually come up is the other. I maintain [Databricks Interview Cheat Sheets](https://dataengineer.wiki/products?utm_source=github&utm_medium=readme&utm_campaign=databricks-code-practice) by seniority level (junior / mid / senior / bundle).
@@ -103,7 +104,19 @@ New exercises and labs ship regularly. Follow on [LinkedIn](https://www.linkedin
 
 ## Feedback
 
-Found a bug? Have a suggestion? [Open an issue](../../issues).
+Found an exercise that can't be solved as written? That's the most useful thing you can report - [open an issue](../../issues/new/choose). Suggestions for new topics welcome too.
+
+Finished an exercise and want to keep your work? Fork the repo - your solutions stay in your fork. Please don't open a PR with solved TODO cells; it deletes the exercise for everyone else. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+[CC BY-SA 4.0](LICENSE). In plain terms:
+
+- **Use it, fork it, adapt it, teach from it** - at work, in a study group, on your blog, in a bootcamp, in paid training. Commercial use is fine.
+- **Credit it clearly.** Name this repo and link back, visibly enough that your audience knows where the exercises came from. Passing them off as your own material is the one thing that isn't allowed.
+- **Share adaptations under the same terms.** If you modify the exercises, your version carries this license too - so nobody can take a fork private and lock it down.
+
+Using this in paid training or a course? Go ahead - just keep the attribution obvious. I'd genuinely like to hear about it: [say hi](https://www.linkedin.com/in/jrlasak/).
 
 ---
 

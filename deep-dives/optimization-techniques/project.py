@@ -2,7 +2,7 @@
 # MAGIC %md
 # MAGIC # Delta Lake Optimization Project
 # MAGIC
-# MAGIC This notebook is a guided, hands‑on lab to explore core Delta Lake optimization techniques in Databricks. You'll iteratively: generate data → profile baseline performance → apply optimizations → observe impact in the Spark UI and table metadata.
+# MAGIC This notebook is a guided, hands-on lab to explore core Delta Lake optimization techniques in Databricks. You'll iteratively: generate data → profile baseline performance → apply optimizations → observe impact in the Spark UI and table metadata.
 # MAGIC
 # MAGIC ## Learning Objectives
 # MAGIC By the end you should be able to:
@@ -263,7 +263,7 @@ df_raw.where(
 # MAGIC
 # MAGIC ### When to Use
 # MAGIC - Multi-column filters in your queries
-# MAGIC - Tables with 2–4 frequently queried, moderate/high-cardinality columns
+# MAGIC - Tables with 2-4 frequently queried, moderate/high-cardinality columns
 # MAGIC - Data that doesn’t change constantly (batch / micro-batch growth)
 # MAGIC - Need clustering on columns that would be poor physical partitions
 # MAGIC
@@ -283,7 +283,7 @@ df_raw.where(
 # MAGIC
 # MAGIC We Z-Order on `country`, `customer_id`, `product_id` to boost skipping for the predicate used in our benchmark query.
 # MAGIC
-# MAGIC > Operational Hint: Re-run Z-ORDER after significant (e.g. 10–20%) new data growth in the clustered dimensions or after large backfills.
+# MAGIC > Operational Hint: Re-run Z-ORDER after significant (e.g. 10-20%) new data growth in the clustered dimensions or after large backfills.
 # MAGIC
 
 # COMMAND ----------
@@ -430,11 +430,11 @@ df_raw.write.format("delta").mode("overwrite").saveAsTable(tbl('liquid_clustered
 # MAGIC - Before heavy analytical / BI workloads to lower latency
 # MAGIC
 # MAGIC ### When NOT to Use
-# MAGIC - Files already in healthy size band (~100MB–1GB depending on workload)
+# MAGIC - Files already in healthy size band (~100MB-1GB depending on workload)
 # MAGIC - Ultra-low latency streaming where rewrite cost is disruptive
 # MAGIC - Limited compute window / cost constraints (schedule off-peak instead)
 # MAGIC
-# MAGIC > Rule of thumb: Target 100–500MB average file size for large analytical tables. Monitor via `DESCRIBE DETAIL` (numFiles & sizeInBytes / numFiles).
+# MAGIC > Rule of thumb: Target 100-500MB average file size for large analytical tables. Monitor via `DESCRIBE DETAIL` (numFiles & sizeInBytes / numFiles).
 # MAGIC
 # MAGIC ### Simulation Approach
 # MAGIC We append tiny random samples repeatedly to manufacture fragmentation, then run `OPTIMIZE` to compact.
@@ -643,7 +643,7 @@ spark.sql(f"DESCRIBE DETAIL {tbl('auto_compact')}").select("numFiles").show()
 # MAGIC - Active streaming or batch readers may still reference older snapshots
 # MAGIC - Immediately after heavy DML when retention window not met
 # MAGIC
-# MAGIC > Production Practice: Retain at least 7 days (often 14–30+ for regulated domains). Use table history & storage metrics to justify more frequent vacuuming.
+# MAGIC > Production Practice: Retain at least 7 days (often 14-30+ for regulated domains). Use table history & storage metrics to justify more frequent vacuuming.
 # MAGIC
 
 # COMMAND ----------
@@ -746,7 +746,7 @@ spark.sql(f"DESCRIBE DETAIL {tbl('partitioned')}").select("numFiles").show()
 # MAGIC 4. Using Liquid Clustering on tiny tables (<1GB) where overhead > benefit
 # MAGIC 5. Running manual OPTIMIZE on tables already governed by auto compaction (duplicate cost)
 # MAGIC 6. Z-Ordering on extremely high-cardinality random IDs / high-precision timestamps (low locality gain)
-# MAGIC 7. Not monitoring average file size drift after optimizations (missing 100MB–1GB target band)
+# MAGIC 7. Not monitoring average file size drift after optimizations (missing 100MB-1GB target band)
 # MAGIC 8. Blanket applying the same strategy to every table without considering access patterns
 # MAGIC 9. Forgetting to re-run Z-Order after large backfills (stale clustering)
 # MAGIC 10. Lowering VACUUM retention below recovery requirements (operational risk)

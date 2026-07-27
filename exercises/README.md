@@ -29,10 +29,11 @@ Solutions live in a separate `solutions/` notebook so you don't accidentally pee
 |---|---|---|---|
 | [Delta Lake](delta-lake/) | 6 | 51 | MERGE, time travel, schema enforcement, OPTIMIZE, liquid clustering, change data feed |
 | [ELT](elt/) | 7 | 53 | Spark SQL joins, window functions, PySpark transformations, Auto Loader, batch ingestion, medallion, complex types |
+| [Streaming](streaming/) | 6 | 45 | Structured Streaming basics, windowed aggregations & watermarks, stream-static joins, stream-stream joins, foreachBatch patterns, checkpointing & recovery |
 
-**Total: 13 notebooks, 104 exercises.**
+**Total: 19 notebooks, 149 exercises.**
 
-More topics coming - next up: Streaming, Unity Catalog, Performance, DLT.
+More topics coming - next up: Unity Catalog, Performance, DLT.
 
 ## Folder layout
 
